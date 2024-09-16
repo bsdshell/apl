@@ -1,0 +1,62 @@
+gcc:*: gcc in shell, c code in shell, gcc eof, code in shell, here doc
+https://stoppels.ch/2022/08/04/stop-searching-for-shared-libraries.html
+gcc -shared -o libf.so -x c - <<EOF
+#include<stdio.h>
+void fun(){
+puts("Hello World");
+}
+EOF
+// Create shared lib => libf.so
+gcc -o runit -x c - <<EOF
+#include<stdio.h>
+int main(){
+printf("Hello World");
+}
+EOF
+// Create exec ./runit
+shell_script :*: here document, generate script, shell multiple line, sh multiple line
+--------------------------------------------------------------------------
+# KEY: global scope
+{
+v="Hell World"
+}
+echo $v
+# KEY: local scope
+(
+v="Hello World"
+)
+echo $v
+--------------------------------------------------------------------------
+echo $v
+# create variable with here doc
+VAR=$(cat <<EOF
+abc'asdf"
+$(dont-execute-this)
+foo"bar"''
+EOF
+)
+--------------------------------------------------------------------------
+VAR=$(cat <<'END_HEREDOC'
+abc'asdf"
+$(dont-execute-this)
+foo"bar"''
+END_HEREDOC
+)
+--------------------------------------------------------------------------
+# create shell script with here document
+name="$1"
+(
+cat<<EOF
+#!/bin/bash
+cd /tmp
+ls
+EOF
+) > /tmp/"${name}.sh"
+--------------------------------------------------------------------------
+# comment out code block in shell script, anonymous here doc
+:<<EOF
+ls
+ls
+EOF
+echo "comment out code block with here document"
+--------------------------------------------------------------------------
